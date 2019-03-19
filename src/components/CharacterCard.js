@@ -8,7 +8,7 @@ class StudentContainer extends React.Component {
     clicked: false
   }
 
-  handleClickBtn = () => {
+  handleClickEdit = () => {
     this.setState({
       clicked: !this.state.clicked
     })
@@ -16,8 +16,8 @@ class StudentContainer extends React.Component {
 
   render(){
     return (
-      <div id="character-list">
-        {this.state.clicked ? <EditForm handleClickBtn={this.handleClickBtn} handleEditForm={this.props.handleEditForm} student={this.props.student} /> : <CharacterDetails student={this.props.student} button={this.props.button} handleToggle={this.props.handleToggle} handleClickBtn={this.handleClickBtn} />}
+      <div id="character-card">
+        {this.state.clicked ? <EditForm handleClickEdit={this.handleClickEdit} newName={this.props.newName} handleChangeName={this.props.handleChangeName} student={this.props.student} /> : <CharacterDetails student={this.props.student} handleToggle={this.props.handleToggle} handleClickEdit={this.handleClickEdit} />}
       </div>
     )
   }

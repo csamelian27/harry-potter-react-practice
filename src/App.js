@@ -10,68 +10,66 @@ class App extends Component {
   state = {
     allStudents: [],
     teamStudents: [],
-    filterTerm: "",
-    newName: ""
-    // newRole: "",
-    // newPatronus: ""
+    newName: "",
+    searchTerm: ""
   }
 
-  componentDidMount() {
+  componentDidMount = () => {
     fetch(getGryffindor)
       .then(resp => resp.json())
       .then(students => students[0].members.map(student => {
-        fetch(getStudent(student._id))
+        return fetch(getStudent(student._id))
           .then(resp => resp.json())
           .then(student => this.setState({ allStudents: [...this.state.allStudents, student]}))
       }))
   }
 
   handleAdd = (studentObj) => {
-    let newAllStudents = [...this.state.allStudents].filter(student => student._id !== studentObj._id)
-    let newTeamStudents = [studentObj, ...this.state.teamStudents]
+    const newStudents = [...this.state.allStudents].filter(student => student._id !== studentObj._id)
+    const newTeam = [studentObj, ...this.state.teamStudents]
     this.setState({
-      allStudents: newAllStudents,
-      teamStudents: newTeamStudents
+      allStudents: newStudents,
+      teamStudents: newTeam
     })
   }
 
   handleRemove = (studentObj) => {
-    let newAllStudents = [studentObj, ...this.state.allStudents]
-    let newTeamStudents = [...this.state.teamStudents].filter(student => student._id !== studentObj._id)
+    const newStudents = [studentObj, ...this.state.allStudents]
+    const newTeam = [...this.state.teamStudents].filter(student => student._id !== studentObj._id)
     this.setState({
-      allStudents: newAllStudents,
-      teamStudents: newTeamStudents
+      allStudents: newStudents,
+      teamStudents: newTeam
     })
   }
 
-  handleFilterTerm = (e) => {
-    this.setState({
-      filterTerm: e.target.value
-    })
-  }
-
-  handleFilter = (array) => {
-    if(this.state.filterTerm === "") {
-      return array
-    } else {
-      return [...array].filter(student => student.name.toLowerCase().includes(this.state.filterTerm.toLowerCase()))
-    }
-  }
-
-  handleEditForm = (e, student) => {
+  handleChangeName = (e, student) => {
     student.name = e.target.value
     this.setState({
       newName: e.target.value
     })
   }
 
+  handleFilterTerm = (e) => {
+    this.setState({
+      searchTerm: e.target.value
+    })
+  }
+
+  handleFilter = (array) => {
+    if(this.state.searchTerm === "") {
+      return array
+    } else {
+      return [...array].filter(student => student.name.toLowerCase().includes(this.state.searchTerm.toLowerCase()))
+    }
+  }
+
   render(){
     console.log(this.state);
     return (
       <div id="character-container">
-        <Filter filterTerm={this.state.filterTerm} handleFilterTerm={this.handleFilterTerm} />
-        <CharacterList students={this.handleFilter(this.state.allStudents)} handleToggle={this.handleAdd} handleEditForm={this.handleEditForm} />
-        <TeamList students={this.handleFilter(this.state.teamStudents)} handleToggle={this.handleRemove} handleEditForm={this.handleEditForm} />
+        <Filter searchTerm={this.state.searchTerm} handleFilterTerm={this.handleFilterTerm} />
+        <CharacterList students={this.handleFilter(this.state.allStudents)} handleToggle={this.handleAdd} newName={this.state.newName} handleChangeName={this.handleChangeName} />
+        <TeamList students={this.handleFilter(this.state.teamStudents)} handleToggle={this.handleRemove} newName={this.state.newName} handleChangeName={this.handleChangeName} />
       </div>
     )
   }

@@ -3,7 +3,7 @@ import Card from './CharacterCard';
 
 const TeamList = (props) => {
 
-  let cards = props.students.map(studentObj => <Card key={studentObj._id} student={studentObj} handleToggle={props.handleToggle} button="Remove" handleEditForm={props.handleEditForm} />)
+  let cards = props.students.map(student => <Card key={student._id} student={student} handleToggle={props.handleToggle} newName={props.newName} handleChangeName={props.handleChangeName} />)
 
   return (
     <div id="team-list">
