@@ -1,21 +1,29 @@
 import React, {Component} from 'react';
 import './App.css';
-import {getGryffindor} from './endpoints'
+import {getGryffindor, getStudent} from './endpoints'
 import CharacterList from './components/CharacterList.js'
 import TeamList from './components/TeamList.js'
-import Nav from './components/Nav.js'
+import Filter from './components/Filter.js'
 
 class App extends Component {
 
   state = {
     allStudents: [],
-    teamStudents: []
+    teamStudents: [],
+    filterTerm: "",
+    newName: ""
+    // newRole: "",
+    // newPatronus: ""
   }
 
   componentDidMount() {
     fetch(getGryffindor)
       .then(resp => resp.json())
-      .then(students => this.setState({ allStudents: students[0].members }))
+      .then(students => students[0].members.map(student => {
+        fetch(getStudent(student._id))
+          .then(resp => resp.json())
+          .then(student => this.setState({ allStudents: [...this.state.allStudents, student]}))
+      }))
   }
 
   handleAdd = (studentObj) => {
@@ -36,13 +44,34 @@ class App extends Component {
     })
   }
 
+  handleFilterTerm = (e) => {
+    this.setState({
+      filterTerm: e.target.value
+    })
+  }
+
+  handleFilter = (array) => {
+    if(this.state.filterTerm === "") {
+      return array
+    } else {
+      return [...array].filter(student => student.name.toLowerCase().includes(this.state.filterTerm.toLowerCase()))
+    }
+  }
+
+  handleEditForm = (e, student) => {
+    student.name = e.target.value
+    this.setState({
+      newName: e.target.value
+    })
+  }
+
   render(){
     console.log(this.state);
     return (
       <div id="character-container">
-        <Nav />
-        <CharacterList students={this.state.allStudents} handleToggle={this.handleAdd} />
-        <TeamList students={this.state.teamStudents} handleToggle={this.handleRemove} />
+        <Filter filterTerm={this.state.filterTerm} handleFilterTerm={this.handleFilterTerm} />
+        <CharacterList students={this.handleFilter(this.state.allStudents)} handleToggle={this.handleAdd} handleEditForm={this.handleEditForm} />
+        <TeamList students={this.handleFilter(this.state.teamStudents)} handleToggle={this.handleRemove} handleEditForm={this.handleEditForm} />
       </div>
     )
   }

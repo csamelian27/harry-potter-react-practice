@@ -3,7 +3,7 @@ import Card from './CharacterCard';
 
 const StudentContainer = (props) => {
 
-  const cards = props.students.map(studentObj => <Card key={studentObj._id} student={studentObj} handleToggle={props.handleToggle} />)
+  const cards = props.students.map(studentObj => <Card key={studentObj._id} student={studentObj} handleToggle={props.handleToggle} button="Add" handleEditForm={props.handleEditForm} />)
 
   return (
     <div id="character-list">
